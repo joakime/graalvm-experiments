@@ -45,7 +45,7 @@ public class Demo
         try
         {
             Path path = Path.of(uri);
-            dumpPathDetails("Direct open", path);
+            dumpPathDetails("Direct open of URI: " + uri, path);
         } catch (FileSystemNotFoundException e)
         {
             // we probably need to mount it first
@@ -89,7 +89,7 @@ public class Demo
         try (FileSystem fs = FileSystems.newFileSystem(uri, env))
         {
             dumpPathDetails("root of mount", fs.getPath("/"));
-            dumpPathDetails("Specific URI", Path.of(uri));
+            dumpPathDetails("Specific URI: " + uri, Path.of(uri));
         }
         catch (IOException e)
         {
