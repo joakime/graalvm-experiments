@@ -12,7 +12,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.jetty.util.TypeUtil;
+import org.eclipse.jetty.util.StringUtil;
 import org.eclipse.jetty.util.resource.PathResource;
 
 public class Demo
@@ -22,8 +22,13 @@ public class Demo
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
         lookup(classLoader, "org/eclipse/jetty/version/build.properties");
-        lookup(classLoader, TypeUtil.toClassReference(PathResource.class));
+        lookup(classLoader, toClassReference(PathResource.class));
         lookup(classLoader, "graaldemo/hello.txt");
+    }
+
+    public static String toClassReference(Class<?> clazz)
+    {
+        return clazz.getName().replace('.', '/').concat(".class");
     }
 
     public static void lookup(ClassLoader classLoader, String resourceRef)
@@ -96,7 +101,7 @@ public class Demo
         Map<String, String> env = new HashMap<>();
         try (FileSystem fs = FileSystems.newFileSystem(uri, env))
         {
-            dumpPathDetails("root of mount", fs.getPath("/"));
+            dumpPathDetails("root of mount: " + uri, fs.getPath("/"));
             dumpPathDetails("Specific URI: " + uri, Path.of(uri));
         }
         catch (IOException e)

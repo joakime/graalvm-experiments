@@ -82,6 +82,8 @@ https://www.graalvm.org/latest/reference-manual/native-image/#prerequisites
 
 ### Build and Run using Maven
 
+If you have performed the prerequisites above, you can use Maven to build the native image.
+
 ```shell
 $ mvn clean package -Pnative
 ./target/graalvm-demo
@@ -95,6 +97,8 @@ In this demo, the default `resource-config.json` only exports resources under `g
 
 
 ### Build a native image manually (Classpath)
+
+If you prefer to build this manually, you can use the `native-image` binary to do that.
 
 ```shell
 $ native-image \
