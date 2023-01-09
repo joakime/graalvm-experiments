@@ -23,6 +23,7 @@ public class Demo
 
         lookup(classLoader, "org/eclipse/jetty/version/build.properties");
         lookup(classLoader, TypeUtil.toClassReference(PathResource.class));
+        lookup(classLoader, "graaldemo/hello.txt");
     }
 
     public static void lookup(ClassLoader classLoader, String resourceRef)

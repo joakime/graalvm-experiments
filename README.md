@@ -80,7 +80,21 @@ Install Native Build Tool Prerequisites
 
 https://www.graalvm.org/latest/reference-manual/native-image/#prerequisites
 
-### Build a native image (Classpath)
+### Build and Run using Maven
+
+```shell
+$ mvn clean package -Pnative
+./target/graalvm-demo
+```
+
+Resources can only be found if they're included (= off by default).
+
+Best practice is to store a `resource-config.json` file under `src/main/resources/META-INF/native-image/groupId/artifactId/resource-config.json`.
+
+In this demo, the default `resource-config.json` only exports resources under `graaldemo/*`. Replace this file with the one named `resource-config-ALTERNATIVE.json` to include the `build.properties` files from above.
+
+
+### Build a native image manually (Classpath)
 
 ```shell
 $ native-image \
@@ -169,3 +183,9 @@ WARNING: Unable to find PathResource.class
 ```
 
 This is the `resource:/` based URL that we are looking for.
+
+
+### Remarks
+
+1. Note that URI.toPath.toURI.toPath results in a bogus, non-existant path. Graal bug report [here](https://github.com/oracle/graal/issues/5720)
+2. The first call to `Path.of` (or `Paths.get`) with a native-image `resource:` URL may trigger a `FileSystemNotFoundException`, very much like with resources in a jar file. The demo code handles this situation
