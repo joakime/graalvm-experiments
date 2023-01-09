@@ -134,12 +134,36 @@ Produced artifacts:
 ========================================================================================================================
 ```
 
+TIP: You can use `./build-native-image.sh` as well.
+
 This produces a binary at `/graaldemo.demo`, executing it results in ...
 
 ```shell
-$ ./graaldemo.demo 
+$ ./graaldemo.demo
 -- Looking for: org/eclipse/jetty/version/build.properties
 FOUND: resource:/org/eclipse/jetty/version/build.properties
+java.nio.file.FileSystemNotFoundException: Unable to open URI directly, switching to mount version.
+Mounting: resource:/org/eclipse/jetty/version/build.properties
+-- root of mount
+Path: /
+Path.toURI: resource:file:///resources!/
+Path.getFileSystem.className: (com.oracle.svm.core.jdk.resources.NativeImageResourceFileSystem)
+Files.isDirectory(path): true
+Files.isRegularFile(path): false
+Files.isReadable(path): true
+Files.exists(path): true
+Files.size(path): 0
+Files.getLastModifiedTime(path): 2023-01-09T17:32:01.829Z
+-- Specific URI
+Path: /org/eclipse/jetty/version/build.properties
+Path.toURI: resource:file:///resources!/org/eclipse/jetty/version/build.properties
+Path.getFileSystem.className: (com.oracle.svm.core.jdk.resources.NativeImageResourceFileSystem)
+Files.isDirectory(path): false
+Files.isRegularFile(path): true
+Files.isReadable(path): true
+Files.exists(path): true
+Files.size(path): 163
+Files.getLastModifiedTime(path): 2023-01-09T17:32:01.829Z
 -- Looking for: PathResource.class
 WARNING: Unable to find PathResource.class
 ```
