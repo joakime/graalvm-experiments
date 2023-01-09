@@ -47,7 +47,29 @@ FOUND: jar:file:///home/joakim/code/jetty/github/graalvm-experiments/target/depe
 Under module-path, it cannot find the `build.properties` due to the `module-info.class` in the `jetty-util-11.0.13.jar` rules.
 This is expected behavior in this mode.
 
-## To Run (GraalVM)
+## To Run (GraalVM Native-Image)
 
-TODO: Document how to package/run this demo so that GraalVM `resource://path/to/blah` is available.
+Prerequisites
 
+	# Obtain GraalVM 22.3 or newer
+	# adjust path to GraalVM JVM
+	export JAVA_HOME=/Library/Java/JavaVirtualMachines/graalvm-ce-java19-22.3.0/Contents/Home
+	export PATH=$JAVA_HOME/bin:$PATH
+	# Install native-image support; you may also need to install a C compiler (gcc)
+	gu install native-image
+
+Building and running
+
+	mvn clean package -Pnative
+	./target/graalvm-experiments-1.0-SNAPSHOT
+
+Resources can only be found if they're included (= off by default).
+
+Best practice is to store a `resource-config.json` file under `src/main/resources/META-INF/native-image/groupId/artifactId/resource-config.json`.
+
+In this demo, the default `resource-config.json` only exports resources under `graaldemo/*`. Replace this file with the one named `resource-config-ALTERNATIVE.json` to include the `build.properties` files from above.
+
+### Remarks
+
+1. Note that URI.toPath.toURI.toPath results in a bogus, non-existant path. Graal bug report [here](https://github.com/oracle/graal/issues/5720)
+2. The first call to `Path.of` (or `Paths.get`) with a native-image `resource:` URL may trigger a `FileSystemNotFoundException`, very much like with resources in a jar file. The demo code handles this situation
