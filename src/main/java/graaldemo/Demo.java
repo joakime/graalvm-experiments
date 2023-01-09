@@ -12,31 +12,37 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.jetty.util.resource.Resource;
+import org.eclipse.jetty.util.TypeUtil;
+import org.eclipse.jetty.util.resource.PathResource;
 
 public class Demo
 {
-    public static void main(String[] args) throws URISyntaxException
+    public static void main(String[] args)
     {
-        String versionResourceRef = "org/eclipse/jetty/version/build.properties";
-        System.out.println("-- Looking for: " + versionResourceRef);
-        URL urlVersion = Thread.currentThread().getContextClassLoader().getResource(versionResourceRef);
-        if (urlVersion == null)
-            System.out.println("WARNING: Unable to find resource: " + versionResourceRef);
-        else
-        {
-            System.out.println("FOUND: " + urlVersion.toURI());
-            dumpPathDetails(urlVersion.toURI());
-        }
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
-        System.out.println("-- Looking for: PathResource.class");
-        URL urlPathResource = Resource.class.getResource("PathResource.class");
-        if (urlPathResource == null)
-            System.out.println("WARNING: Unable to find PathResource.class");
+        lookup(classLoader, "org/eclipse/jetty/version/build.properties");
+        lookup(classLoader, TypeUtil.toClassReference(PathResource.class));
+    }
+
+    public static void lookup(ClassLoader classLoader, String resourceRef)
+    {
+        System.out.println("-- Looking for: " + resourceRef);
+        URL url = classLoader.getResource(resourceRef);
+        if (url == null)
+            System.out.println("WARNING: Unable to find resource: " + resourceRef);
         else
         {
-            System.out.println("FOUND: " + urlPathResource.toURI());
-            dumpPathDetails(urlPathResource.toURI());
+            try
+            {
+                URI uri = url.toURI();
+                System.out.println("FOUND: " + uri);
+                dumpPathDetails(uri);
+            }
+            catch (URISyntaxException e)
+            {
+                System.out.println("ERROR: (" + e.getClass().getName() + "): " + url);
+            }
         }
     }
 
@@ -46,7 +52,8 @@ public class Demo
         {
             Path path = Path.of(uri);
             dumpPathDetails("Direct open of URI: " + uri, path);
-        } catch (FileSystemNotFoundException e)
+        }
+        catch (FileSystemNotFoundException e)
         {
             // we probably need to mount it first
             System.out.println(e.getClass().getName() + ": Unable to open URI directly, switching to mount version.");
@@ -85,7 +92,7 @@ public class Demo
     private static void dumpMountedPathDetails(URI uri)
     {
         System.out.println("Mounting: " + uri);
-        Map<String,String> env = new HashMap<>();
+        Map<String, String> env = new HashMap<>();
         try (FileSystem fs = FileSystems.newFileSystem(uri, env))
         {
             dumpPathDetails("root of mount", fs.getPath("/"));
